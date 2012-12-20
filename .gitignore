@@ -1,0 +1,8 @@
+
+*.pyc
+
+# ignore the virtualenv stuff
+bin/*
+build/*
+include/*
+lib/*
