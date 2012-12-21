@@ -37,6 +37,11 @@
       .when {
         float: right;
       }
+      .def {
+        border-bottom: thin #CCCCCC solid;
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
 
     </style>
 
@@ -53,8 +58,8 @@
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#">Add</a></li>
+          <li class="active"><a id="show_home" href="#">Home</a></li>
+          <li><a id="show_add" href="#">Add</a></li>
         </ul>
         <h3 class="muted">D-Fine</h3>
       </div>
@@ -66,30 +71,22 @@
         <p class="lead">
         <input type="text" id="word">
         </p>
-        <a class="btn btn-large btn-success" href="#">Define</a>
+        <a id="define_word" class="btn btn-large btn-success" href="#">Define</a>
       </div>
 
       <hr>
       <div id="definition">
-        <div class="theword">
-          <div class="def">
-            <div class="when muted"> 1/2/3 4:56pm </div>
-            <p>
-            Something here
-            </p>
-            <a class="btn btn-mini" href="#"> Edit </a>
-          </div>
-        </div>
       </div>
 
-      <div id="add_definition">
+      <div id="add_definition" style="display: none">
         <form>
             <fieldset>
               <legend>Add Definition</legend>
               <input id="add_word" type="text" placeholder="Word or Phrase">
+              <input id="add_num" type="hidden">
               <label>Definition</label>
               <textarea id="add_def" rows="10" class="input-xxlarge"> </textarea>
-              <span class="help-block">Use Markdown</span>
+              <br>
               <button type="submit" id="add_button" class="btn">Add</button>
             </fieldset>
           </form>
@@ -100,20 +97,92 @@
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/ICanHaz.min.js"></script>
+    <script type="text/html" id="def_template">
+        <div class="theword">
+          <h3 class="word">{{word}}</h3>
+          {{#defs}}
+          <div class="def def{{num}}">
+            <div class="when muted"> {{last_touch}} </div>
+            <p id="content">
+            {{def}}
+            </p>
+            <a class="btn btn-mini" href="#" onclick="editDef({{num}}); return false;" > Edit </a>
+          </div>
+         {{/defs}}
+        </div>
+    </script>
     <script type="text/javascript">
+    function loadWord(word) {
+      // we load to fast to make the loading screeen worth it
+      //$("#definition").html("<div class='loading'>Loading...</div>");
+      $("#definition").html("");
+      showHome();
+      $.getJSON("/api/def/" + word).done(function(data) {
+        if (data["status"] == "error") {
+          alert("failed");
+          return;
+        }
+        $("#definition").html(ich.def_template(data));
+      });
+    }
+    function showHome() {
+      $("#add_definition").hide()
+      $("#definition").show();
+    }
+    function showAdd() {
+      $("#add_definition").show()
+      $("#definition").hide();
+      $("#add_word").val("");
+      $("#add_num").val("");
+      $("#add_def").val("");
+    }
+    function editDef(num) {
+      showAdd();
+      $("#add_num").val(num);
+      $("#add_word").val($(".word").text());
+      $("#add_def").val($.trim($(".def" + num + " #content").text()));
+    }
     $(document).ready(function() {
+
+      $("#show_home").click(function(e) {
+        e.preventDefault();
+        showHome();
+      });
+      $("#show_add").click(function(e) {
+        e.preventDefault();
+        showAdd();
+      });
+      $("#word").keypress(function (e) {
+        if ( e.which == 13 ) {
+          e.preventDefault();
+          var word = $("#word").val()
+          loadWord(word);
+        }
+      });
+      $("#define_word").click(function(e) {
+        e.preventDefault();
+        var word = $("#word").val()
+        loadWord(word);
+      });
       $("#add_button").click(function(e) {
         e.preventDefault();
         var word = $("#add_word").val();
         var def = $("#add_def").val();
-        $.ajax("/api/def/"+word+"/add", {
+        var num = $("#add_num").val();
+        var url = "/api/def/"+word+"/add/";
+        if(num !== "") {
+          url += num + "/";
+        }
+        $.ajax(url, {
           data: JSON.stringify({"def": def}),
           type: 'POST',
           contentType : 'application/json'
         }).done(function(data) {
           if (data["status"] == "error") {
             alert("Failed");
+            return;
           }
+          loadWord(word);
         });
       });
     });

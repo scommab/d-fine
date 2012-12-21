@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 
 import storage
 
@@ -15,23 +16,42 @@ def main():
 def find():
   return ""
 
-@app.route("/api/def/<word>/add", methods=["POST", "PUT"])
-def add_def(word):
+@app.route("/api/def/<word>/add/<int:pos>/", methods=["POST", "PUT"])
+@app.route("/api/def/<word>/add/", methods=["POST", "PUT"])
+def add_def(word, pos=None):
   data = storage.get_def(word)
   print data
   if not data:
     data = []
   d = json.loads(request.data)
   if not d or "def" not in d:
-    return json.dumps({"status": "error"})
-  data.append({"def": d["def"].strip()})
+    return json.dumps({"status": "error", "message":"Incorrect or no Data sent"})
+  def_data = {
+    "num": len(data),
+    "def": d["def"].strip(),
+    "last_touch": datetime.now().isoformat()
+    }
+  if pos is None:
+    data.append(def_data)
+  elif pos < len(data) and pos >= 0:
+    data[pos] = def_data
+  else:
+    return json.dumps({"status": "error", "message": "the def id was wrong" })
+
   storage.set_def(word, data)
   return json.dumps({"status": "worked"})
 
 @app.route("/api/def/<word>", methods=["GET", "POST"])
 @app.route("/api/def/<word>/", methods=["GET", "POST"])
 def single_word(word):
-  return json.dumps(storage.get_def(word))
+  data = storage.get_def(word)
+  if not data:
+    return json.dumps({"status": "error"})
+  return json.dumps({
+    "status": "worked",
+    "word": word,
+    "defs": data
+  });
 
 @app.route("/api/all_defs")
 @app.route("/api/all_defs/")
