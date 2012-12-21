@@ -27,16 +27,22 @@ def add_def(word, pos=None):
   if not d or "def" not in d:
     return json.dumps({"status": "error", "message":"Incorrect or no Data sent"})
   def_data = {
-    "num": len(data),
+    "id": len(data),
     "def": d["def"].strip(),
     "last_touch": datetime.now().isoformat()
     }
   if pos is None:
     data.append(def_data)
-  elif pos < len(data) and pos >= 0:
-    data[pos] = def_data
   else:
-    return json.dumps({"status": "error", "message": "the def id was wrong" })
+    def_data["id"] = pos
+    found = False
+    for d, i in zip(data, range(len(data))):
+      if d["id"] == pos:
+        data[i] = def_data
+        found = True
+        break
+    if not found:
+      return json.dumps({"status": "error", "message": "the def id was wrong" })
 
   storage.set_def(word, data)
   return json.dumps({"status": "worked"})

@@ -101,12 +101,12 @@
         <div class="theword">
           <h3 class="word">{{word}}</h3>
           {{#defs}}
-          <div class="def def{{num}}">
+          <div class="def def{{id}}">
             <div class="when muted"> {{last_touch}} </div>
             <p id="content">
             {{def}}
             </p>
-            <a class="btn btn-mini" href="#" onclick="editDef({{num}}); return false;" > Edit </a>
+            <a class="btn btn-mini" href="#" onclick="editDef({{id}}); return false;" > Edit </a>
           </div>
          {{/defs}}
         </div>

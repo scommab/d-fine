@@ -30,6 +30,7 @@ def get_connection():
     return mock
 
 def get_def(name):
+  name = name.lower()
   d = get_connection().hget("jargon-defs", name)
   if not d:
     return d
@@ -39,6 +40,7 @@ def get_all_def():
   return get_connection().hkeys("jargon-defs")
 
 def set_def(name, defs):
+  name = name.lower()
   return get_connection().hset("jargon-defs", name, json.dumps(defs))
 
 if __name__ == "__main__":
