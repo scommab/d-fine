@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>D-fine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <style type="text/css">
+      body {
+        padding-top: 20px;
+        padding-bottom: 40px;
+      }
+
+      /* Custom container */
+      .container-narrow {
+        margin: 0 auto;
+        max-width: 700px;
+      }
+      .container-narrow > hr {
+        margin: 30px 0;
+      }
+
+      /* Main marketing message and sign up button */
+      .jumbotron {
+        margin: 60px 0;
+        text-align: center;
+      }
+      .jumbotron h1 {
+        font-size: 72px;
+        line-height: 1;
+      }
+      .jumbotron .btn {
+        font-size: 21px;
+        padding: 14px 24px;
+      }
+      .when {
+        float: right;
+      }
+
+    </style>
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+  </head>
+
+  <body>
+
+    <div class="container-narrow">
+
+      <div class="masthead">
+        <ul class="nav nav-pills pull-right">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#">Add</a></li>
+        </ul>
+        <h3 class="muted">D-Fine</h3>
+      </div>
+
+      <hr>
+
+      <div class="jumbotron">
+        <!-- <h1>Define</h1> -->
+        <p class="lead">
+        <input type="text" id="word">
+        </p>
+        <a class="btn btn-large btn-success" href="#">Define</a>
+      </div>
+
+      <hr>
+      <div id="definition">
+        <div class="theword">
+          <div class="def">
+            <div class="when muted"> 1/2/3 4:56pm </div>
+            <p>
+            Something here
+            </p>
+            <a class="btn btn-mini" href="#"> Edit </a>
+          </div>
+        </div>
+      </div>
+
+      <div id="add_definition">
+        <form>
+            <fieldset>
+              <legend>Add Definition</legend>
+              <input id="add_word" type="text" placeholder="Word or Phrase">
+              <label>Definition</label>
+              <textarea id="add_def" rows="10" class="input-xxlarge"> </textarea>
+              <span class="help-block">Use Markdown</span>
+              <button type="submit" id="add_button" class="btn">Add</button>
+            </fieldset>
+          </form>
+      </div>
+
+    </div> <!-- /container -->
+
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script src="/static/js/ICanHaz.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+      $("#add_button").click(function(e) {
+        e.preventDefault();
+        var word = $("#add_word").val();
+        var def = $("#add_def").val();
+        $.ajax("/api/def/"+word+"/add", {
+          data: JSON.stringify({"def": def}),
+          type: 'POST',
+          contentType : 'application/json'
+        }).done(function(data) {
+          if (data["status"] == "error") {
+            alert("Failed");
+          }
+        });
+      });
+    });
+    </script>
+  </body>
+</html>

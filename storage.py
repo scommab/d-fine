@@ -17,7 +17,7 @@ class mockRedis(object):
   def hkeys(self, name1):
     return self.keystore.get(name1, {}).keys()
 
-DEBUG = False
+DEBUG = True
     
 mock = mockRedis()
 def get_connection():
@@ -38,8 +38,8 @@ def get_def(name):
 def get_all_def():
   return get_connection().hkeys("jargon-defs")
 
-def set_def(name, d):
-  return get_connection().hset("jargon-defs", name, json.dumps(d))
+def set_def(name, defs):
+  return get_connection().hset("jargon-defs", name, json.dumps(defs))
 
 if __name__ == "__main__":
   DEBUG = True
