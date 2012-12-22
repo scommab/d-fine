@@ -42,6 +42,9 @@
         padding-top: 10px;
         padding-bottom: 10px;
       }
+      .word {
+        text-transform: capitalize;
+      }
 
     </style>
 
@@ -68,7 +71,7 @@
 
       <div class="jumbotron">
         <!-- <h1>Define</h1> -->
-        <p class="lead">
+        <p class="control-group lead">
         <input type="text" id="word">
         </p>
         <a id="define_word" class="btn btn-large btn-success" href="#">Define</a>
@@ -87,7 +90,8 @@
               <label>Definition</label>
               <textarea id="add_def" rows="10" class="input-xxlarge"> </textarea>
               <br>
-              <button type="submit" id="add_button" class="btn">Add</button>
+              <button type="submit" id="add_button" class="btn btn-success">Add</button>
+              <button type="submit" id="remove_button" class="btn btn-danger">Remove</button>
             </fieldset>
           </form>
       </div>
@@ -117,9 +121,11 @@
       //$("#definition").html("<div class='loading'>Loading...</div>");
       $("#definition").html("");
       showHome();
+      $("#word").val(word);
+      $("#word").parent().removeClass("error");
       $.getJSON("/api/def/" + word).done(function(data) {
         if (data["status"] == "error") {
-          alert("failed");
+          $("#word").parent().addClass("error");
           return;
         }
         $("#definition").html(ich.def_template(data));
@@ -129,18 +135,24 @@
       $("#add_definition").hide()
       $("#definition").show();
     }
-    function showAdd() {
+    function showAdd(word, def, num) {
       $("#add_definition").show()
       $("#definition").hide();
-      $("#add_word").val("");
-      $("#add_num").val("");
-      $("#add_def").val("");
+      $("#add_word").val(word);
+      $("#add_def").val(def);
+      $("#add_num").val(num);
+      if (num === undefined) {
+        // this is a new def
+        $("#remove_button").hide();
+      } else {
+        // this is an edit
+        $("#remove_button").show();
+      }
     }
     function editDef(num) {
-      showAdd();
-      $("#add_num").val(num);
-      $("#add_word").val($(".word").text());
-      $("#add_def").val($.trim($(".def" + num + " #content").text()));
+      showAdd($(".word").text(),
+          $.trim($(".def" + num + " #content").text()),
+          num);
     }
     $(document).ready(function() {
 
@@ -163,6 +175,22 @@
         e.preventDefault();
         var word = $("#word").val()
         loadWord(word);
+      });
+      $("#remove_button").click(function(e) {
+        e.preventDefault();
+        var word = $("#add_word").val();
+        var num = $("#add_num").val();
+        var url = "/api/def/"+word+"/add/" + num + "/del";
+        $.ajax(url, {
+          type: 'POST',
+          contentType : 'application/json'
+        }).done(function(data) {
+          if (data["status"] == "error") {
+            alert("Failed");
+            return;
+          }
+          loadWord(word);
+        });
       });
       $("#add_button").click(function(e) {
         e.preventDefault();

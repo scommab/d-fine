@@ -47,6 +47,20 @@ def add_def(word, pos=None):
   storage.set_def(word, data)
   return json.dumps({"status": "worked"})
 
+@app.route("/api/def/<word>/add/<int:pos>/del", methods=["POST", "PUT"])
+def del_def(word, pos):
+  data = storage.get_def(word)
+  if not data:
+    return json.dumps({"status": "error", "message":"word is already deleted"})
+  for i in range(len(data)):
+    d = data[i]
+    if d["id"] == pos:
+      del data[i]
+      break
+
+  storage.set_def(word, data)
+  return json.dumps({"status": "worked"})
+
 @app.route("/api/def/<word>", methods=["GET", "POST"])
 @app.route("/api/def/<word>/", methods=["GET", "POST"])
 def single_word(word):
