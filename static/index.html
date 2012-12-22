@@ -45,6 +45,12 @@
       .word {
         text-transform: capitalize;
       }
+      .error .error-message {
+        display: block;
+      }
+      .error-message {
+        display: none;
+      }
 
     </style>
 
@@ -71,9 +77,10 @@
 
       <div class="jumbotron">
         <!-- <h1>Define</h1> -->
-        <p class="control-group lead">
-        <input type="text" id="word">
-        </p>
+        <div class="control-group lead">
+          <input type="text" id="word">
+          <div class="error-message"> Word not found </div>
+        </div>
         <a id="define_word" class="btn btn-large btn-success" href="#">Define</a>
       </div>
 
