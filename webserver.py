@@ -3,6 +3,7 @@ from datetime import datetime
 
 import storage
 
+import markdown
 from flask import Flask, url_for, request
 app = Flask(__name__)
 
@@ -29,6 +30,7 @@ def add_def(word, pos=None):
   def_data = {
     "id": len(data),
     "def": d["def"].strip(),
+    "html": markdown.markdown(d["def"]),
     "last_touch": datetime.now().isoformat()
     }
   if pos is None:
@@ -61,8 +63,25 @@ def del_def(word, pos):
   storage.set_def(word, data)
   return json.dumps({"status": "worked"})
 
-@app.route("/api/def/<word>", methods=["GET", "POST"])
-@app.route("/api/def/<word>/", methods=["GET", "POST"])
+
+@app.route("/api/def/<word>/<int:pos>")
+def single_word_def(word, pos):
+  data = storage.get_def(word)
+  if not data:
+    return json.dumps({"status": "error"})
+  result = None
+  for d in data:
+    if d["id"] == pos:
+      result = d
+      break
+  if not result:
+    return json.dumps({"status": "error"})
+  return json.dumps({
+    "status": "worked",
+    "word": word,
+    "def": result
+  });
+@app.route("/api/def/<word>/")
 def single_word(word):
   data = storage.get_def(word)
   if not data:
@@ -82,6 +101,7 @@ if __name__ == "__main__":
   app.run(debug=True)
   url_for("static", filename='index.html')
   url_for("static", filename='js/jquery.min.js')
+  url_for("static", filename='js/shodow.js')
   url_for("static", filename='js/bootstrap.min.js')
   url_for("static", filename='js/ICanHaz.min.js')
   url_for("static", filename='css/bootstrap.css')

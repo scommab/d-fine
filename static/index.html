@@ -35,7 +35,7 @@
         padding: 14px 24px;
       }
       .when {
-        float: right;
+        text-align: right;
       }
       .def {
         border-bottom: thin #CCCCCC solid;
@@ -115,7 +115,7 @@
           <div class="def def{{id}}">
             <div class="when muted"> {{last_touch}} </div>
             <p id="content">
-            {{def}}
+            {{{html}}}
             </p>
             <a class="btn btn-mini" href="#" onclick="editDef({{id}}); return false;" > Edit </a>
           </div>
@@ -135,6 +135,10 @@
           $("#word").parent().addClass("error");
           return;
         }
+        /*var converter = new Showdown.converter();
+        for(var i=0;i<data["defs"].length;i++) {
+          data["defs"][i]["def"] = converter.makeHtml(data["defs"][i]["def"]);
+        }*/
         $("#definition").html(ich.def_template(data));
       });
     }
@@ -157,9 +161,17 @@
       }
     }
     function editDef(num) {
-      showAdd($(".word").text(),
-          $.trim($(".def" + num + " #content").text()),
-          num);
+      var word = $(".word").text();
+      $.getJSON("/api/def/"+word+"/"+num).done(function(d) {
+          if (d["status"] == "error") {
+            alert("Failed def lookup");
+            return;
+          }
+          var word = d["word"]
+          var def = d["def"]["def"]
+          var num = d["def"]["id"]
+          showAdd(word, def, num);
+      });
     }
     $(document).ready(function() {
 
@@ -193,7 +205,7 @@
           contentType : 'application/json'
         }).done(function(data) {
           if (data["status"] == "error") {
-            alert("Failed");
+            alert("Delete Failed: " + data["message"]);
             return;
           }
           loadWord(word);
@@ -214,7 +226,7 @@
           contentType : 'application/json'
         }).done(function(data) {
           if (data["status"] == "error") {
-            alert("Failed");
+            alert("Add Failed: " + data["message"]);
             return;
           }
           loadWord(word);
