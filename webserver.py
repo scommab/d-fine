@@ -1,4 +1,5 @@
 import json
+import uuid
 from datetime import datetime
 
 import storage
@@ -17,18 +18,17 @@ def main():
 def find():
   return ""
 
-@app.route("/api/def/<word>/add/<int:pos>/", methods=["POST", "PUT"])
+@app.route("/api/def/<word>/add/<pos>/", methods=["POST", "PUT"])
 @app.route("/api/def/<word>/add/", methods=["POST", "PUT"])
 def add_def(word, pos=None):
   data = storage.get_def(word)
-  print data
   if not data:
     data = []
   d = json.loads(request.data)
   if not d or "def" not in d:
     return json.dumps({"status": "error", "message":"Incorrect or no Data sent"})
   def_data = {
-    "id": len(data),
+    "id": str(uuid.uuid4()),
     "def": d["def"].strip(),
     "html": markdown.markdown(d["def"]),
     "last_touch": datetime.now().isoformat()
@@ -49,7 +49,7 @@ def add_def(word, pos=None):
   storage.set_def(word, data)
   return json.dumps({"status": "worked"})
 
-@app.route("/api/def/<word>/add/<int:pos>/del", methods=["POST", "PUT"])
+@app.route("/api/def/<word>/add/<pos>/del", methods=["POST", "PUT"])
 def del_def(word, pos):
   data = storage.get_def(word)
   if not data:
@@ -64,7 +64,7 @@ def del_def(word, pos):
   return json.dumps({"status": "worked"})
 
 
-@app.route("/api/def/<word>/<int:pos>")
+@app.route("/api/def/<word>/<pos>")
 def single_word_def(word, pos):
   data = storage.get_def(word)
   if not data:

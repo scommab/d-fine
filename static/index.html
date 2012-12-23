@@ -67,7 +67,8 @@
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a id="show_home" href="#">Home</a></li>
+          <!--<li class="active"><a id="show_home" href="#">Home</a></li> -->
+          <li><a id="show_home" href="#">Home</a></li>
           <li><a id="show_add" href="#">Add</a></li>
         </ul>
         <h3 class="muted">D-Fine</h3>
@@ -113,12 +114,12 @@
         <div class="theword">
           <h3 class="word">{{word}}</h3>
           {{#defs}}
-          <div class="def def{{id}}">
+          <div class="def">
             <div class="when muted"> {{last_touch}} </div>
             <p id="content">
             {{{html}}}
             </p>
-            <a class="btn btn-mini" href="#" onclick="editDef({{id}}); return false;" > Edit </a>
+            <a class="btn btn-mini" href="#" onclick="editDef('{{id}}'); return false;" > Edit </a>
           </div>
          {{/defs}}
         </div>
