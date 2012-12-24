@@ -16,7 +16,7 @@ def main():
 # apis
 @app.route("/api/find")
 def find():
-  return ""
+  return json.dumps({"status": "error", "message": "not implimented yet"})
 
 @app.route("/api/def/<word>/add/<pos>/", methods=["POST", "PUT"])
 @app.route("/api/def/<word>/add/", methods=["POST", "PUT"])
@@ -30,7 +30,7 @@ def add_def(word, pos=None):
   def_data = {
     "id": str(uuid.uuid4()),
     "def": d["def"].strip(),
-    "html": markdown.markdown(d["def"]),
+    "html": markdown.markdown(d["def"], safe_mode='escape'),
     "last_touch": datetime.now().isoformat()
     }
   if pos is None:
