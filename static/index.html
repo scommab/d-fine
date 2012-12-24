@@ -69,8 +69,7 @@
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <!--<li class="active"><a id="show_home" href="#">Home</a></li> -->
-          <li><a id="show_home" href="#">Home</a></li>
+          <li class="active"><a id="show_home" href="#">Home</a></li> 
           <li><a id="show_add" href="#">Add</a></li>
         </ul>
         <h3 class="muted">D-Fine</h3>
@@ -81,7 +80,7 @@
       <div class="jumbotron finder">
         <!-- <h1>Define</h1> -->
         <div class="control-group lead">
-          <input type="text" id="word">
+          <input type="text" id="word" placeholder="What to Define">
           <div class="error-message"> Word not found </div>
         </div>
         <a id="define_word" class="btn btn-large btn-success" href="#">Define</a>
@@ -149,11 +148,14 @@
       });
     }
     function showHome() {
+      $(".nav li").removeClass("active");
       $(".finder").slideDown();
       $("#definition").slideDown();
       $("#add_definition").slideUp()
+      $("#show_home").parent().addClass("active");
     }
     function showAdd(word, def, num) {
+      $(".nav li").removeClass("active");
       $(".finder").slideUp();
       $("#definition").slideUp();
       $("#add_definition").show()
@@ -162,6 +164,7 @@
       $("#add_id").val(num);
       if (num === undefined) {
         // this is a new def
+        $("#show_add").parent().addClass("active");
         $("#remove_button").hide();
         $("#add_word").prop("readonly",false);
       } else {
