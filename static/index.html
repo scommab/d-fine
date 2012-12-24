@@ -34,13 +34,15 @@
         font-size: 21px;
         padding: 14px 24px;
       }
+
       .when {
         text-align: right;
       }
       .def {
-        border-bottom: thin #CCCCCC solid;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        border: thin #CCCCCC solid;
+        border-left-width: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
       }
       .word {
         text-transform: capitalize;
@@ -76,16 +78,16 @@
 
       <hr>
 
-      <div class="jumbotron">
+      <div class="jumbotron finder">
         <!-- <h1>Define</h1> -->
         <div class="control-group lead">
           <input type="text" id="word">
           <div class="error-message"> Word not found </div>
         </div>
         <a id="define_word" class="btn btn-large btn-success" href="#">Define</a>
+        <hr>
       </div>
 
-      <hr>
       <div id="definition">
       </div>
 
@@ -94,11 +96,13 @@
             <fieldset>
               <legend>Add Definition</legend>
               <input id="add_word" type="text" placeholder="Word or Phrase">
-              <input id="add_num" type="hidden">
+              <input id="add_id" type="hidden">
               <label>Definition</label>
               <textarea id="add_def" rows="10" class="input-xxlarge"> </textarea>
               <br>
-              <span class="help-block"> to create a link use [some text](http://example.com/) </span>
+              <span class="help-block">
+                You can use <a href="http://daringfireball.net/projects/markdown/syntax">markdown</a> to embellish you definition
+              </span>
               <button type="submit" id="add_button" class="btn btn-success">Add</button>
               <button type="submit" id="remove_button" class="btn btn-danger">Remove</button>
             </fieldset>
@@ -145,21 +149,25 @@
       });
     }
     function showHome() {
-      $("#add_definition").hide()
-      $("#definition").show();
+      $(".finder").slideDown();
+      $("#definition").slideDown();
+      $("#add_definition").slideUp()
     }
     function showAdd(word, def, num) {
+      $(".finder").slideUp();
+      $("#definition").slideUp();
       $("#add_definition").show()
-      $("#definition").hide();
       $("#add_word").val(word);
       $("#add_def").val(def);
-      $("#add_num").val(num);
+      $("#add_id").val(num);
       if (num === undefined) {
         // this is a new def
         $("#remove_button").hide();
+        $("#add_word").prop("readonly",false);
       } else {
         // this is an edit
         $("#remove_button").show();
+        $("#add_word").prop("readonly",true);
       }
     }
     function editDef(num) {
@@ -176,7 +184,6 @@
       });
     }
     $(document).ready(function() {
-
       $("#show_home").click(function(e) {
         e.preventDefault();
         showHome();
@@ -200,7 +207,7 @@
       $("#remove_button").click(function(e) {
         e.preventDefault();
         var word = $("#add_word").val();
-        var num = $("#add_num").val();
+        var num = $("#add_id").val();
         var url = "/api/def/"+word+"/add/" + num + "/del";
         $.ajax(url, {
           type: 'POST',
@@ -217,7 +224,7 @@
         e.preventDefault();
         var word = $("#add_word").val();
         var def = $("#add_def").val();
-        var num = $("#add_num").val();
+        var num = $("#add_id").val();
         var url = "/api/def/"+word+"/add/";
         if(num !== "") {
           url += num + "/";
