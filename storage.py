@@ -17,17 +17,25 @@ class mockRedis(object):
   def hkeys(self, name1):
     return self.keystore.get(name1, {}).keys()
 
-DEBUG = True
+DEBUG = None
     
 mock = mockRedis()
 def get_connection():
+  global DEBUG
+  if DEBUG is None:
+    try:
+      r = redis.Redis()
+      r.ping()
+      DEBUG = False
+    except:
+      print "Redis connection failed, using DEBUG mode"
+      DEBUG = True
+      return mock
   if DEBUG:
     return mock
-  try:
+  else:
     return redis.Redis()
-  except:
-     #debug mode
-    return mock
+    
 
 def get_def(name):
   name = name.lower()
