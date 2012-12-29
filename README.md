@@ -4,7 +4,7 @@ A webapp to define words and phrases
 
 ## How to use
 
-* Install (Redis)[http://redis.io/]
+* Install [Redis](http://redis.io/)
 * Setup virtualenv
 <pre>
     virtualenv --no-site-packages ./
