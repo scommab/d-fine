@@ -18,6 +18,10 @@ A webapp to define words and phrases
 </pre>
 
 
+Note: D-fine *will* work without redis, but all the data be lost on each restart.
+
+
+
 ## Why I build this
 
 Two reasons:
