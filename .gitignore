@@ -2,6 +2,7 @@
 *.pyc
 
 # ignore the virtualenv stuff
+.Python
 bin/*
 build/*
 include/*
