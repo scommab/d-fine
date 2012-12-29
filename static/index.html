@@ -129,13 +129,15 @@
     </script>
     <script type="text/javascript">
     function loadWord(word) {
-      // we load to fast to make the loading screeen worth it
+      // we load too fast to make the loading screeen worth it
       //$("#definition").html("<div class='loading'>Loading...</div>");
       $("#definition").html("");
+      $("#define_word").addClass("disabled");
       showHome();
       $("#word").val(word);
       $("#word").parent().removeClass("error");
       $.getJSON("/api/def/" + word).done(function(data) {
+        $("#define_word").removeClass("disabled");
         if (data["status"] == "error") {
           $("#word").parent().addClass("error");
           return;
