@@ -8,32 +8,44 @@ import markdown
 from flask import Flask, url_for, request
 app = Flask(__name__)
 
+
+def parse_request():
+  word = request.args.get("word", None)
+  pos = request.args.get("def", None)
+  return word, pos
+
 @app.route("/")
 def main():
   with open("static/index.html") as f:
     return f.read()
 
 # apis
-@app.route("/api/find")
+@app.route("/api/def/find")
 def find():
-  return json.dumps({"status": "error", "message": "not implimented yet"})
+  return json.dumps({
+    "status": "error",
+    "message": "not implimented yet"
+  })
 
-@app.route("/api/def/<word>/add/<pos>/", methods=["POST", "PUT"])
-@app.route("/api/def/<word>/add/", methods=["POST", "PUT"])
-def add_def(word, pos=None):
+@app.route("/api/def/add/", methods=["POST", "PUT"])
+def add_def():
+  word, pos = parse_request()
   data = storage.get_def(word)
   if not data:
     data = []
   d = json.loads(request.data)
   if not d or "def" not in d:
-    return json.dumps({"status": "error", "message":"Incorrect or no Data sent"})
+    return json.dumps({
+      "status": "error",
+      "message":"Incorrect or no Data sent"
+    })
   def_data = {
     "id": str(uuid.uuid4()),
     "def": d["def"].strip(),
     "html": markdown.markdown(d["def"], safe_mode='escape'),
     "last_touch": datetime.now().isoformat()
     }
-  if pos is None:
+  if pos is None or pos == "":
     data.append(def_data)
   else:
     def_data["id"] = pos
@@ -44,61 +56,70 @@ def add_def(word, pos=None):
         found = True
         break
     if not found:
-      return json.dumps({"status": "error", "message": "the def id was wrong" })
+      return json.dumps({
+        "status": "error",
+        "message": "the def '%s' was not found" % pos 
+      })
 
   storage.set_def(word, data)
   return json.dumps({"status": "worked"})
 
-@app.route("/api/def/<word>/add/<pos>/del", methods=["POST", "PUT"])
-def del_def(word, pos):
+@app.route("/api/def/del/", methods=["POST", "PUT"])
+def del_def():
+  word, pos = parse_request()
   data = storage.get_def(word)
   if not data:
-    return json.dumps({"status": "error", "message":"word is already deleted"})
+    return json.dumps({
+      "status": "error",
+      "message":"word is already deleted"
+    })
   for i in range(len(data)):
     d = data[i]
     if d["id"] == pos:
       del data[i]
       break
-
   storage.set_def(word, data)
   return json.dumps({"status": "worked"})
 
 
-@app.route("/api/def/<word>/<pos>")
-def single_word_def(word, pos):
+@app.route("/api/def/get/")
+def single_word_def():
+  word, pos = parse_request()
   data = storage.get_def(word)
   if not data:
-    return json.dumps({"status": "error"})
+    return json.dumps({
+      "status": "error",
+      "message": "Coudn't find '%s'" % (word)
+    })
+  if not pos:
+    return json.dumps({
+      "status": "worked",
+      "word": word,
+      "defs": data
+    });
   result = None
   for d in data:
     if d["id"] == pos:
       result = d
       break
   if not result:
-    return json.dumps({"status": "error"})
+    return json.dumps({
+      "status": "error",
+      "message": "Coudn't find '%s' with def '%s'" % (word, pos)
+    })
   return json.dumps({
     "status": "worked",
     "word": word,
     "def": result
   });
-@app.route("/api/def/<word>/")
-def single_word(word):
-  data = storage.get_def(word)
-  if not data:
-    return json.dumps({"status": "error"})
-  return json.dumps({
-    "status": "worked",
-    "word": word,
-    "defs": data
-  });
 
-@app.route("/api/all_defs")
+
 @app.route("/api/all_defs/")
 def all_words():
   return json.dumps(storage.get_all_def())
 
 if __name__ == "__main__":
-  app.run(debug=True)
+  app.run(host="0.0.0.0", debug=True)
   url_for("static", filename='index.html')
   url_for("static", filename='js/jquery.min.js')
   url_for("static", filename='js/shodow.js')

@@ -128,6 +128,11 @@
         </div>
     </script>
     <script type="text/javascript">
+    function gen_url(action, word, def) {
+      var url = "/api/def/" + encodeURIComponent(action) + "/";
+      return url +"?" + $.param({"word":word, "def": def});
+      return result;
+    }
     function loadWord(word) {
       // we load too fast to make the loading screeen worth it
       //$("#definition").html("<div class='loading'>Loading...</div>");
@@ -136,7 +141,7 @@
       showHome();
       $("#word").val(word);
       $("#word").parent().removeClass("error");
-      $.getJSON("/api/def/" + word).done(function(data) {
+      $.getJSON(gen_url("get", word)).done(function(data) {
         $("#define_word").removeClass("disabled");
         if (data["status"] == "error") {
           $("#word").parent().addClass("error");
@@ -177,7 +182,7 @@
     }
     function editDef(num) {
       var word = $(".word").text();
-      $.getJSON("/api/def/"+word+"/"+num).done(function(d) {
+      $.getJSON(gen_url("get", word,num)).done(function(d) {
           if (d["status"] == "error") {
             alert("Failed def lookup");
             return;
@@ -213,7 +218,7 @@
         e.preventDefault();
         var word = $("#add_word").val();
         var num = $("#add_id").val();
-        var url = "/api/def/"+word+"/add/" + num + "/del";
+        var url = gen_url("del", word, num);
         $.ajax(url, {
           type: 'POST',
           contentType : 'application/json'
@@ -230,10 +235,7 @@
         var word = $("#add_word").val();
         var def = $("#add_def").val();
         var num = $("#add_id").val();
-        var url = "/api/def/"+word+"/add/";
-        if(num !== "") {
-          url += num + "/";
-        }
+        var url = gen_url("add", word, num)
         $.ajax(url, {
           data: JSON.stringify({"def": def}),
           type: 'POST',
