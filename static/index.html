@@ -70,6 +70,7 @@
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
           <li class="active"><a id="show_home" href="#">Home</a></li> 
+          <li><a id="show_all" href="#">All</a></li>
           <li><a id="show_add" href="#">Add</a></li>
         </ul>
         <h3 class="muted">D-Fine</h3>
@@ -77,7 +78,7 @@
 
       <hr>
 
-      <div class="jumbotron finder">
+      <div class="jumbotron finder main_section">
         <!-- <h1>Define</h1> -->
         <div class="control-group lead">
           <input type="text" id="word" placeholder="What to Define">
@@ -87,10 +88,11 @@
         <hr>
       </div>
 
-      <div id="definition">
+      <div id="definition" class="main_section">
       </div>
 
-      <div id="add_definition" style="display: none">
+
+      <div id="add_definition" class="main_section" style="display: none">
         <form>
             <fieldset>
               <legend>Add Definition</legend>
@@ -108,11 +110,35 @@
           </form>
       </div>
 
+      <div id="all_definition" class="main_section" style="display: none">
+        <div id="all_words">
+        Loading...
+        </div>
+      </div>
+
     </div> <!-- /container -->
 
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/ICanHaz.min.js"></script>
+    <script type="text/html" id="all_words_template">
+      <ul>
+      {{#letters}}
+      <li>
+        {{letter}}
+        <ul>
+        {{#words}}
+        <li>
+          <a href="#" onclick="loadWord('{{.}}'); return false;">
+            {{.}}
+          </a>
+         </li>
+        {{/words}}
+        </ul>
+      </li>
+      {{/letters}}
+      </ul>
+    </script>
     <script type="text/html" id="def_template">
         <div class="theword">
           <h3 class="word">{{word}}</h3>
@@ -155,17 +181,47 @@
       });
     }
     function showHome() {
+      if ($(".finder:visible").length > 0) {
+        return;
+      }
       $(".nav li").removeClass("active");
+      $(".main_section").slideUp()
       $(".finder").slideDown();
       $("#definition").slideDown();
-      $("#add_definition").slideUp()
       $("#show_home").parent().addClass("active");
     }
+
+    function showAll() {
+      $(".nav li").removeClass("active");
+      $(".main_section").slideUp()
+      $("#all_definition").slideDown();
+      $("#show_all").parent().addClass("active");
+      $("#all_words").html("Loading...");
+      $.getJSON(gen_url("find")).done(function(d) {
+          d = d["data"];
+          d.sort();
+          var first_letter = [{"letter":d[0][0], "words":[]}];
+          var l = 0;
+          for (var i=0;i<d.length;i++) {
+            var letter = d[i][0];
+            if (letter != first_letter[l]["letter"]) {
+              first_letter.push({
+                "letter": letter,
+                "words": []
+                });
+              l += 1;
+            }
+            first_letter[l]["words"].push(d[i]);
+          }
+          window.first_letter = first_letter;
+          $("#all_words").html(ich.all_words_template({"letters": first_letter}));
+      });
+    }
+
     function showAdd(word, def, num) {
       $(".nav li").removeClass("active");
-      $(".finder").slideUp();
-      $("#definition").slideUp();
-      $("#add_definition").show()
+      $(".main_section").slideUp()
+      $("#add_definition").slideDown()
       $("#add_word").val(word);
       $("#add_def").val(def);
       $("#add_id").val(num);
@@ -201,6 +257,10 @@
       $("#show_add").click(function(e) {
         e.preventDefault();
         showAdd();
+      });
+      $("#show_all").click(function(e) {
+        e.preventDefault();
+        showAll();
       });
       $("#word").keypress(function (e) {
         if ( e.which == 13 ) {

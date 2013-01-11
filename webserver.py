@@ -20,11 +20,12 @@ def main():
     return f.read()
 
 # apis
-@app.route("/api/def/find")
+@app.route("/api/def/find/")
 def find():
+  data = storage.get_all_def()
   return json.dumps({
-    "status": "error",
-    "message": "not implimented yet"
+    "status": "worked",
+    "data": data
   })
 
 @app.route("/api/def/add/", methods=["POST", "PUT"])
@@ -114,9 +115,6 @@ def single_word_def():
   });
 
 
-@app.route("/api/all_defs/")
-def all_words():
-  return json.dumps(storage.get_all_def())
 
 if __name__ == "__main__":
   app.run(host="0.0.0.0", debug=True)
