@@ -9,6 +9,11 @@ class mockRedis(object):
   def hget(self, name1, name2):
     return self.keystore.get(name1, {}).get(name2, None)
 
+  def hdel(self, name1, name2):
+    if name1 in self.keystore:
+      if name2 in self.keystore[name1]:
+        del self.keystore[name1][name2]
+
   def hset(self, name1, name2, val):
     d = self.keystore.get(name1, {})
     d[name2] = val
@@ -50,6 +55,9 @@ def get_all_def():
 def set_def(name, defs):
   name = name.lower()
   return get_connection().hset("jargon-defs", name, json.dumps(defs))
+
+def del_def(name):
+  return get_connection().hdel("jargon-defs", name)
 
 if __name__ == "__main__":
   DEBUG = True

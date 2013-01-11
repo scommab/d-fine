@@ -79,7 +79,10 @@ def del_def():
     if d["id"] == pos:
       del data[i]
       break
-  storage.set_def(word, data)
+  if len(data) == 0:
+    storage.del_def(word)
+  else:
+    storage.set_def(word, data)
   return json.dumps({"status": "worked"})
 
 
