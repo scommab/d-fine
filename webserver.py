@@ -22,7 +22,17 @@ def main():
 # apis
 @app.route("/api/def/find/")
 def find():
+  contains = request.args.get("contains", None)
+  startswith = request.args.get("startswith", None)
+  endswith = request.args.get("endswith", None)
   data = storage.get_all_def()
+  if contains:
+    data = [d for d in data if contains in d]
+  if startswith:
+    data = [d for d in data if d.startswith(startswith)]
+  if endswith:
+    data = [d for d in data if d.endswith(endswith)]
+
   return json.dumps({
     "status": "worked",
     "data": data
