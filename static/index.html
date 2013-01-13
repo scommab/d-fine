@@ -34,6 +34,10 @@
         font-size: 21px;
         padding: 14px 24px;
       }
+      .typeahead {
+        text-align: left;
+        font-size: 12px;
+      }
 
       .when {
         text-align: right;
@@ -275,6 +279,15 @@
           loadWord(word);
         }
       });
+      $("#word").typeahead( {
+        source: function(q, p) {
+          $.getJSON(gen_url("find") + "?contains=" + q).done(function(d) {
+            var d = d["data"];
+            d.sort();
+            p(d);
+          });
+        }
+      })
       $("#define_word").click(function(e) {
         e.preventDefault();
         var word = $("#word").val()
