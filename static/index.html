@@ -164,9 +164,12 @@
         </div>
     </script>
     <script type="text/javascript">
-    function gen_url(action, word, def) {
+    function gen_url(action, params) {
+      if (params === undefined) {
+        params = {}
+      }
       var url = "/api/def/" + encodeURIComponent(action) + "/";
-      return url +"?" + $.param({"word":word, "def": def});
+      return url +"?" + $.param(params);
       return result;
     }
     function loadWord(word) {
@@ -177,7 +180,7 @@
       showHome();
       $("#word").val(word);
       $("#word").parent().removeClass("error");
-      $.getJSON(gen_url("get", word)).done(function(data) {
+      $.getJSON(gen_url("get", {"word":word})).done(function(data) {
         $("#define_word").removeClass("disabled");
         if (data["status"] == "error") {
           $("#word").parent().addClass("error");
@@ -248,7 +251,7 @@
     }
     function editDef(num) {
       var word = $(".word").text();
-      $.getJSON(gen_url("get", word,num)).done(function(d) {
+      $.getJSON(gen_url("get", {"word":word, "def":num})).done(function(d) {
           if (d["status"] == "error") {
             alert("Failed def lookup");
             return;
@@ -281,7 +284,7 @@
       });
       $("#word").typeahead( {
         source: function(q, p) {
-          $.getJSON(gen_url("find") + "?contains=" + q).done(function(d) {
+        $.getJSON(gen_url("find", {"contains":q})).done(function(d) {
             var d = d["data"];
             d.sort();
             p(d);
@@ -297,7 +300,7 @@
         e.preventDefault();
         var word = $("#add_word").val();
         var num = $("#add_id").val();
-        var url = gen_url("del", word, num);
+        var url = gen_url("del",{"word":word, "def":num});
         $.ajax(url, {
           type: 'POST',
           contentType : 'application/json'
@@ -314,7 +317,7 @@
         var word = $("#add_word").val();
         var def = $("#add_def").val();
         var num = $("#add_id").val();
-        var url = gen_url("add", word, num)
+        var url = gen_url("add", {"word":word, "def":num})
         $.ajax(url, {
           data: JSON.stringify({"def": def}),
           type: 'POST',
