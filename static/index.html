@@ -64,6 +64,18 @@
       #all_words ul ul {
         list-style: circle;
       }
+
+      .all_index {
+        text-transform: capitalize;
+        padding: 10px;
+        margin-bottom: 20px;
+        border-top: solid #333 2px;
+        border-bottom: solid #333 2px;
+      }
+      .all_index a {
+        padding-left: 5px;
+        padding-right: 5px;
+      }
     </style>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -125,17 +137,21 @@
         Loading...
         </div>
       </div>
-
     </div> <!-- /container -->
 
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/ICanHaz.min.js"></script>
     <script type="text/html" id="all_words_template">
+      <div class="all_index">
+      {{#letters}}
+      <a href="#letter_{{letter}}">{{letter}}</a>
+      {{/letters}}
+      </div>
       <ul>
       {{#letters}}
       <li>
-        {{letter}}
+        <a name="letter_{{letter}}"> {{letter}}</a>
         <ul>
         {{#words}}
         <li>
