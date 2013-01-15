@@ -76,6 +76,11 @@
         padding-left: 5px;
         padding-right: 5px;
       }
+      #footer {
+        position: absolute;
+        bottom: 5px;
+        right: 15px;
+      }
     </style>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -124,7 +129,7 @@
               <textarea id="add_def" rows="10" class="input-xxlarge"> </textarea>
               <br>
               <span class="help-block">
-                You can use <a href="http://daringfireball.net/projects/markdown/syntax">markdown</a> to embellish you definition
+                You can use <a href="http://daringfireball.net/projects/markdown/syntax">markdown</a> to embellish you definition 
               </span>
               <button type="submit" id="add_button" class="btn btn-success">Add</button>
               <button type="submit" id="remove_button" class="btn btn-danger">Remove</button>
@@ -138,7 +143,9 @@
         </div>
       </div>
     </div> <!-- /container -->
-
+    <div id="footer">
+      By: Saul
+    </div>
     <script src="/static/js/jquery.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/ICanHaz.min.js"></script>
