@@ -109,7 +109,8 @@
         <!-- <h1>Define</h1> -->
         <div class="control-group lead">
           <input type="text" id="word" placeholder="What to Define">
-          <div class="error-message"> Word not found </div>
+          <div class="error-message"> Word not found
+            <a href="#" id="finder_add_word">add it &rarr;</a> </div>
         </div>
         <a id="define_word" class="btn btn-large btn-success" href="#">Define</a>
         <hr>
@@ -302,6 +303,11 @@
       $("#show_all").click(function(e) {
         e.preventDefault();
         showAll();
+      });
+      $("#finder_add_word").click(function(e) {
+        e.preventDefault();
+        var word = $("#word").val();
+        showAdd(word);
       });
       $("#word").keypress(function (e) {
         if ( e.which == 13 ) {
