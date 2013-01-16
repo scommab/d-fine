@@ -49,7 +49,7 @@
         margin-bottom: 10px;
       }
       .word {
-        font-variant: small-caps;
+        text-transform: uppercase;
       }
       .error .error-message {
         display: block;
@@ -175,7 +175,7 @@
     </script>
     <script type="text/html" id="def_template">
         <div class="theword">
-          <h3 class="word">{{word}}</h3>
+          <h4 class="word">{{word}}</h4>
           {{#defs}}
           <div class="def">
             <div class="when muted"> {{last_touch}} </div>
