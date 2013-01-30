@@ -76,6 +76,10 @@
         padding-left: 5px;
         padding-right: 5px;
       }
+      #count {
+        text-align: center;
+        width: 100%;
+      }
       #footer {
         position: fixed;
         bottom: 5px;
@@ -148,6 +152,7 @@
       By: Saul
     </div>
     <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/jquery.hashchange.min.js"></script>
     <script src="/static/js/bootstrap.min.js"></script>
     <script src="/static/js/ICanHaz.min.js"></script>
     <script type="text/html" id="all_words_template">
@@ -172,10 +177,11 @@
       </li>
       {{/letters}}
       </ul>
+      <div id="count" class="muted">Total of {{count}} words</div>
     </script>
     <script type="text/html" id="def_template">
         <div class="theword">
-          <h4 class="word">{{word}}</h4>
+          <h4 class="word"><a href="/#{{word}}">#</a> {{word}}</h4>
           {{#defs}}
           <div class="def">
             <div class="when muted"> {{last_touch}} </div>
@@ -215,10 +221,6 @@
           $("#word").parent().addClass("error");
           return;
         }
-        /*var converter = new Showdown.converter();
-        for(var i=0;i<data["defs"].length;i++) {
-          data["defs"][i]["def"] = converter.makeHtml(data["defs"][i]["def"]);
-        }*/
         $("#definition").html(ich.def_template(data));
       });
     }
@@ -256,7 +258,7 @@
             first_letter[l]["words"].push(d[i]);
           }
           window.first_letter = first_letter;
-          $("#all_words").html(ich.all_words_template({"letters": first_letter}));
+          $("#all_words").html(ich.all_words_template({"letters": first_letter, "count": d.length}));
       });
     }
 
@@ -316,12 +318,20 @@
           loadWord(word);
         }
       });
+      $(window).hashchange(function() {
+        if (!location.hash) {
+          return; // not interesting
+        }
+        // remove hash
+        var word = location.hash.substring(1);
+        loadWord(word);
+      });
       $("#word").typeahead( {
-        source: function(q, p) {
-        $.getJSON(gen_url("find", {"contains":q})).done(function(d) {
+        source: function(query, result_func) {
+        $.getJSON(gen_url("find", {"contains":query})).done(function(d) {
             var d = d["data"];
             d.sort();
-            p(d);
+            result_func(d);
           });
         }
       })
@@ -364,6 +374,7 @@
           loadWord(word);
         });
       });
+      $(window).hashchange();
     });
     </script>
   </body>
