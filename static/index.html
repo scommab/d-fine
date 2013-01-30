@@ -194,6 +194,7 @@
         </div>
     </script>
     <script type="text/javascript">
+    // <![CDATA[
     function scroll_to(item) {
        $('html, body').animate({
          scrollTop: $(item).offset().top
@@ -312,7 +313,7 @@
         showAdd(word);
       });
       $("#word").keypress(function (e) {
-        if ( e.which == 13 ) {
+        if (e.which == 13) {
           e.preventDefault();
           var word = $("#word").val()
           loadWord(word);
@@ -324,9 +325,12 @@
         }
         // remove hash
         var word = location.hash.substring(1);
+        // TODO: This means I can't link to things with underscores
+        //       I'm not sure if I care though
+        word = word.replace(/_/g, " ");
         loadWord(word);
       });
-      $("#word").typeahead( {
+      $("#word").typeahead({
         source: function(query, result_func) {
         $.getJSON(gen_url("find", {"contains":query})).done(function(d) {
             var d = d["data"];
@@ -334,7 +338,7 @@
             result_func(d);
           });
         }
-      })
+      });
       $("#define_word").click(function(e) {
         e.preventDefault();
         var word = $("#word").val()
@@ -376,6 +380,7 @@
       });
       $(window).hashchange();
     });
+    // ]]>
     </script>
   </body>
 </html>
