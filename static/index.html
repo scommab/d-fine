@@ -183,7 +183,7 @@
       <div id="count" class="muted">Total of {{count}} words</div>
     </script>
     <script type="text/html" id="def_template">
-        <div class="theword">
+        <div id="theword" word="{{word}}">
           <h4 class="word"><a href="/#{{word}}">#</a> {{word}}</h4>
           {{#defs}}
           <div class="def">
@@ -209,7 +209,6 @@
       }
       var url = "/api/def/" + encodeURIComponent(action) + "/";
       return url +"?" + $.param(params);
-      return result;
     }
     function loadWord(word) {
       // we load too fast to make the loading screeen worth it
@@ -285,7 +284,7 @@
       }
     }
     function editDef(num) {
-      var word = $(".word").text();
+      var word = $("#theword").attr("word");
       $.getJSON(gen_url("get", {"word":word, "def":num})).done(function(d) {
           if (d["status"] == "error") {
             alert("Failed def lookup");
