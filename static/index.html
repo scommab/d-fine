@@ -184,7 +184,7 @@
     </script>
     <script type="text/html" id="def_template">
         <div id="theword" word="{{word}}">
-          <h4 class="word"><a href="/#{{word}}">#</a> {{word}}</h4>
+          <h4 class="word"><a href="/#{{word-link}}">#</a> {{word}}</h4>
           {{#defs}}
           <div class="def">
             <div class="when muted"> {{last_touch}} </div>
@@ -224,6 +224,7 @@
           $("#word").parent().addClass("error");
           return;
         }
+        data["word-link"] = encodeURIComponent(data["word"]);
         $("#definition").html(ich.def_template(data));
       });
     }
@@ -329,7 +330,7 @@
         var word = location.hash.substring(1);
         // TODO: This means I can't link to things with underscores
         //       I'm not sure if I care though
-        word = word.replace(/_/g, " ");
+        word = decodeURIComponent(word);
         loadWord(word);
       });
       $("#word").typeahead({
