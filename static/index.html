@@ -88,6 +88,12 @@
       .muted a {
        color: #5A8BA3;
       }
+      .style-details {
+        float: right;
+      }
+      #add_def {
+        width: 100%;
+      }
     </style>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -135,12 +141,30 @@
               <input id="add_id" type="hidden">
               <label>Definition</label>
               <textarea id="add_def" rows="10" class="input-xxlarge"> </textarea>
+
+              <div class="well style-details">
+                Available embellishments:
+                <dl>
+                    <dt>Links</dt>
+                    <dd>[Text of link](http://theurl) or
+                        &lt;http://theurl&gt;</dd>
+                    <dt>Definition Links</dt>
+                    <dd>[Text to show](#the word)</dd>
+                    <dt>Bold</dt>
+                    <dd>_bold_</dd>
+                    <dt>Italics</dt>
+                    <dd>__italics__</dd>
+                    <dt>Code</dt>
+                    <dd>`code`</dd>
+                </dl>
+                For more detail see the <a href="http://daringfireball.net/projects/markdown/syntax">markdown</a> style guide.
+              </div>
+
+              <div class="btn-toolbar">
+                <button type="submit" id="add_button" class="btn btn-success">Add</button>
+                <button type="submit" id="remove_button" class="btn btn-danger">Remove</button>
+              </div>
               <br>
-              <span class="help-block">
-                You can use <a href="http://daringfireball.net/projects/markdown/syntax">markdown</a> to embellish you definition 
-              </span>
-              <button type="submit" id="add_button" class="btn btn-success">Add</button>
-              <button type="submit" id="remove_button" class="btn btn-danger">Remove</button>
             </fieldset>
           </form>
       </div>
