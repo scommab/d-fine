@@ -1,5 +1,6 @@
 import json
 import uuid
+import logging
 from datetime import datetime
 
 import storage
@@ -8,6 +9,7 @@ import markdown
 from flask import Flask, url_for, request
 app = Flask(__name__)
 
+logging.basicConfig(filename='d-fine.log', level=logging.DEBUG)
 
 def parse_request():
   word = request.args.get("word", None)
@@ -101,11 +103,13 @@ def single_word_def():
   word, pos = parse_request()
   data = storage.get_def(word)
   if not data:
+    logging.debug("LOOK UP FAILED: %s" % word)
     return json.dumps({
       "status": "error",
       "message": "Coudn't find '%s'" % (word)
     })
   if not pos:
+    logging.debug("LOOK UP WORKED: %s" % word)
     return json.dumps({
       "status": "worked",
       "word": word,
@@ -117,10 +121,12 @@ def single_word_def():
       result = d
       break
   if not result:
+    logging.debug("LOOK UP WITH POS FAILED: %s (%s)" % (word, pos))
     return json.dumps({
       "status": "error",
       "message": "Coudn't find '%s' with def '%s'" % (word, pos)
     })
+  logging.debug("LOOK UP WORKED: %s (%s)" % (word, pos))
   return json.dumps({
     "status": "worked",
     "word": word,
