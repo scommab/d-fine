@@ -1,5 +1,6 @@
 
 *.pyc
+*.log
 
 # ignore the virtualenv stuff
 .Python
