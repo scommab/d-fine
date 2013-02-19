@@ -65,6 +65,7 @@ def get_failed_lookup():
 
 def failed_lookup(name):
   # todo: save more info about the failed lookup
+  name = name.lower()
   return get_connection().hset("jargon-def-fails", name, 1)
 
 if __name__ == "__main__":
