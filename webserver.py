@@ -139,7 +139,7 @@ def single_word_def():
 def failed_lookups():
   r = storage.get_failed_lookup()
   return json.dumps({
-    "status": "wroked",
+    "status": "worked",
     "words": r
     })
 
