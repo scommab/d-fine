@@ -104,6 +104,7 @@ def single_word_def():
   data = storage.get_def(word)
   if not data:
     logging.debug("LOOK UP FAILED: %s" % word)
+    storage.failed_lookup(word)
     return json.dumps({
       "status": "error",
       "message": "Coudn't find '%s'" % (word)
@@ -134,6 +135,13 @@ def single_word_def():
   });
 
 
+@app.route("/api/failed/get/")
+def failed_lookups():
+  r = storage.get_failed_lookup()
+  return json.dumps({
+    "status": "wroked",
+    "words": r
+    })
 
 if __name__ == "__main__":
   app.run(host="0.0.0.0", debug=True)

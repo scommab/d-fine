@@ -54,10 +54,18 @@ def get_all_def():
 
 def set_def(name, defs):
   name = name.lower()
+  get_connection().hdel("jargon-def-fails", name)
   return get_connection().hset("jargon-defs", name, json.dumps(defs))
 
 def del_def(name):
   return get_connection().hdel("jargon-defs", name)
+
+def get_failed_lookup():
+  return get_connection().hkeys("jargon-def-fails")
+
+def failed_lookup(name):
+  # todo: save more info about the failed lookup
+  return get_connection().hset("jargon-def-fails", name, 1)
 
 if __name__ == "__main__":
   DEBUG = True
