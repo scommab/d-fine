@@ -137,10 +137,13 @@ def single_word_def():
 
 @app.route("/api/failed/get/")
 def failed_lookups():
+  # I could get redis to more of this work
   r = storage.get_failed_lookup()
+  words = [(i[0], int(i[1])) for i in r.items() if i[1] != "1"]
+  words.sort(key=lambda i: -i[1])
   return json.dumps({
     "status": "worked",
-    "words": r
+    "words": words
     })
 
 if __name__ == "__main__":
